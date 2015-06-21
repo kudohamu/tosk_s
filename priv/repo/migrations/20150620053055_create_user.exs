@@ -6,8 +6,9 @@ defmodule Tosk.Repo.Migrations.CreateUser do
       add :icon, :string
       add :name, :string
       add :mail, :string
-      add :hased_password, :string
+      add :hashed_password, :string
       add :provider, :string
+      add :uid, :string
 
       timestamps
     end

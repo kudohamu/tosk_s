@@ -3,7 +3,7 @@ defmodule Tosk.UserTest do
 
   alias Tosk.User
 
-  @valid_attrs %{hased_password: "some content", icon: "some content", mail: "some content", name: "some content", provider: "some content"}
+  @valid_attrs %{hashed_password: "some content", icon: "some content", mail: "some content", name: "some content", provider: "some content"}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do

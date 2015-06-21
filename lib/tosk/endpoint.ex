@@ -27,9 +27,9 @@ defmodule Tosk.Endpoint do
   plug Plug.Head
 
   plug Plug.Session,
-    store: :cookie,
-    key: "_tosk_key",
-    signing_salt: "cbUCvY2/"
+    store: :ets,
+    key: "sid",
+    table: :session
 
   plug :router, Tosk.Router
 end

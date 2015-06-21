@@ -19,7 +19,10 @@ defmodule Tosk.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", Tosk do
-  #   pipe_through :api
-  # end
+  scope "/api", Tosk do
+    pipe_through :api
+    resource "/user", UserController do
+    end
+    post "/user/login", UserController, :login
+  end
 end
