@@ -21,6 +21,14 @@ defmodule Tosk.UserView do
     }
   end
 
+  def render("login.json", %{id: id, token: token}) do
+    %{
+      result: "ok",
+      id: id,
+      token: token
+    }
+  end
+
   def render("error.json", %{msg: msg}) do
     %{
       result: :err,

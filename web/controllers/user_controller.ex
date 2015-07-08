@@ -31,7 +31,7 @@ defmodule Tosk.UserController do
           else
             # conn
             # |> put_status(:unprocessable_entity)
-            # |> render(Tracoo.ChangesetView, "error.json", changeset: changeset)
+            # |> render(Tracoo.ChangesetView, "error.json", changeset: changeset) TODO削除
             if (changeset.errors[:mail] != nil) do
               render(conn, "error.json", %{msg: "既に登録されているメールアドレスです"})
             else
@@ -73,5 +73,16 @@ defmodule Tosk.UserController do
 
     user = Repo.delete(user)
     render(conn, "show.json", user: user)
+  end
+
+  def login(conn, params) do
+    user = Repo.get_by(User, mail: params["mail"])
+    if user && Comeonin.Bcrypt.checkpw(params["password"], user.hashed_password) do
+      token = Ecto.UUID.generate()
+      conn = conn |> fetch_session |> put_session(:token, Comeonin.Bcrypt.hashpwsalt(token))
+      render(conn, "login.json", %{id: user.id, token: token})
+    else
+      render(conn, "error.json", %{msg: :invalid_combination_of_mail_address_and_password})
+    end
   end
 end
