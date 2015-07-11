@@ -22,5 +22,6 @@ defmodule Tosk.Board do
     model
     |> cast(params, @required_fields, @optional_fields)
     |> validate_unique(:uid, on: Tosk.Repo)
+    |> validate_inclusion(:category, 1..2)
   end
 end
