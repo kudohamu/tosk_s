@@ -2,14 +2,14 @@ defmodule Tosk.Board do
   use Tosk.Web, :model
 
   schema "boards" do
-    field :uid, :string
     field :name, :string
     field :category, :integer
 
+    has_many :usersboards, HelloPhoenix.UsersBoards
     timestamps
   end
 
-  @required_fields ~w(uid name category)
+  @required_fields ~w(name category)
   @optional_fields ~w()
 
   @doc """
@@ -21,7 +21,6 @@ defmodule Tosk.Board do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
-    |> validate_unique(:uid, on: Tosk.Repo)
     |> validate_inclusion(:category, 1..2)
   end
 end
