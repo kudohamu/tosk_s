@@ -8,7 +8,7 @@ defmodule Tosk.UsersBoards do
     timestamps
   end
 
-  @required_fields ~w()
+  @required_fields ~w(board_id user_id)
   @optional_fields ~w()
 
   @doc """
@@ -20,5 +20,6 @@ defmodule Tosk.UsersBoards do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> validate_unique(:board_id, scope: [:user_id], on: Tosk.Repo)
   end
 end
