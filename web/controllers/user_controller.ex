@@ -25,8 +25,7 @@ defmodule Tosk.UserController do
           changeset = User.changeset(%User{}, user_params)
           if changeset.valid? && 7 < String.length(user_params["password"]) && user_params["password"] == user_params["password_confirmation"] do
             user = Repo.insert(changeset)
-            token = Ecto.UUID.generate()
-            conn = conn |> fetch_session |> put_session(:token, Comeonin.Bcrypt.hashpwsalt(token))
+            { conn, token } = User.set_token(conn)
             render(conn, "create.json", %{id: user.id, token: token})
           else
             # conn
@@ -78,8 +77,7 @@ defmodule Tosk.UserController do
   def login(conn, params) do
     user = Repo.get_by(User, mail: params["mail"])
     if user && Comeonin.Bcrypt.checkpw(params["password"], user.hashed_password) do
-      token = Ecto.UUID.generate()
-      conn = conn |> fetch_session |> put_session(:token, Comeonin.Bcrypt.hashpwsalt(token))
+      { conn, token } = User.set_token(conn)
       render(conn, "login.json", %{id: user.id, token: token})
     else
       render(conn, "error.json", %{msg: :invalid_combination_of_mail_address_and_password})
