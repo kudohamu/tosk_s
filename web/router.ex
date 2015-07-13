@@ -23,6 +23,8 @@ defmodule Tosk.Router do
     pipe_through :api
     resource "/user", UserController do
     end
+    resources "/boards", BoardController
     post "/user/login", UserController, :login
+    post "/user/logout", UserController, :logout
   end
 end
