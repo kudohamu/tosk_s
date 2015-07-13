@@ -1,5 +1,6 @@
 defmodule Tosk.User do
   use Tosk.Web, :model
+  import Plug.Conn
 
   schema "users" do
     field :icon, :string
@@ -9,6 +10,7 @@ defmodule Tosk.User do
     field :provider, :string
     field :uid, :string
 
+    has_many :usersboards, HelloPhoenix.UsersBoards
     timestamps
   end
 
@@ -43,7 +45,7 @@ defmodule Tosk.User do
     ext = Enum.at(String.split(Enum.at(String.split(icon_data, "data:image/"), 1), ";"), 0)
     if (valid_image_ext?(ext)) do
       image_b64 = Enum.at(String.split(icon_data, "base64,"), 1)
-      case {:ok, image_bin} = Base.decode64(image_b64) do
+      case Base.decode64(image_b64) do
         {:ok, image_bin} ->
           icon_name = "#{Ecto.UUID.generate()}.#{ext}"
           unless File.exists?(get_user_icon_path) do
@@ -64,5 +66,28 @@ defmodule Tosk.User do
       # 画像の拡張子が不正
       {:err, :invalid_data}
     end
+  end
+
+  def authorize?(conn) do
+    authorization = List.first(get_req_header(conn, "authorization"))
+    if authorization do #TODO テストでも使えるように
+      [id | rest] = String.split(authorization, ":")
+      token = List.first rest
+      session_token = (conn |> fetch_session |> get_session(:token))
+      if id && token && session_token && Comeonin.Bcrypt.checkpw(token, session_token) do
+        :ok
+      else
+        :unauthorized
+      end
+    else
+      :unauthorized
+    end
+  end
+
+  def set_token(conn) do
+    token = Ecto.UUID.generate()
+    conn = conn |> fetch_session |> put_session(:token, Comeonin.Bcrypt.hashpwsalt(token))
+
+    { conn, token }
   end
 end
