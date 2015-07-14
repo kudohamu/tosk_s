@@ -2,11 +2,14 @@ defmodule Tosk.BoardView do
   use Tosk.Web, :view
 
   def render("index.json", %{boards: boards}) do
-    %{data: render_many(boards, "board.json")}
+    %{
+      result: "ok",
+      boards: render_many(boards, "board.json")
+    }
   end
 
   def render("show.json", %{board: board}) do
-    %{data: render_one(board, "board.json")}
+    %{board: render_one(board, "board.json")}
   end
 
   def render("create.json", %{id: id}) do
@@ -17,6 +20,9 @@ defmodule Tosk.BoardView do
   end
 
   def render("board.json", %{board: board}) do
-    %{id: board.id}
+    %{
+      id: board.id,
+      name: board.name,
+    }
   end
 end

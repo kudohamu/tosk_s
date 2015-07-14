@@ -75,7 +75,7 @@ defmodule Tosk.User do
       token = List.first rest
       session_token = (conn |> fetch_session |> get_session(:token))
       if id && token && session_token && Comeonin.Bcrypt.checkpw(token, session_token) do
-        :ok
+        { :ok, id, token }
       else
         :unauthorized
       end
