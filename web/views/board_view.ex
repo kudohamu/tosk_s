@@ -25,4 +25,10 @@ defmodule Tosk.BoardView do
       name: board.name,
     }
   end
+
+  def render("delete.json", %{}) do
+    %{
+      result: "ok",
+    }
+  end
 end

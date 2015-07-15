@@ -78,9 +78,19 @@ defmodule Tosk.BoardController do
   end
 
   def delete(conn, %{"id" => id}) do
-    board = Repo.get(Board, id)
+    case User.authorize?(conn) do
+      { :ok, user_id, token } ->
+        board = Repo.get(Board, id)
+        usersboards = Repo.get_by(UsersBoards, user_id: user_id, board_id: id)
 
-    board = Repo.delete(board)
-    render(conn, "show.json", board: board)
+        Repo.delete(board)
+        Repo.delete(usersboards)
+
+        render(conn, "delete.json", %{})
+      :unauthorized ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Tosk.ErrorView, "error.json", %{ msg: "failed_to_creating_board" })
+    end
   end
 end
