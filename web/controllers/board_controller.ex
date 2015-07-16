@@ -10,7 +10,7 @@ defmodule Tosk.BoardController do
   plug :scrub_params, "board" when action in [:create, :update]
   plug :action
 
-  def index(conn, %{ "category" => category }) do
+  def index(conn, %{ }) do
     case User.authorize?(conn) do
       { :ok, id, token } ->
         ids_query = Ecto.Query.from ub in UsersBoards, 

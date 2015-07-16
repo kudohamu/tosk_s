@@ -3,13 +3,12 @@ defmodule Tosk.Board do
 
   schema "boards" do
     field :name, :string
-    field :category, :integer
 
     has_many :usersboards, HelloPhoenix.UsersBoards
     timestamps
   end
 
-  @required_fields ~w(name category)
+  @required_fields ~w(name)
   @optional_fields ~w()
 
   @doc """
@@ -21,6 +20,5 @@ defmodule Tosk.Board do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
-    |> validate_inclusion(:category, 1..2)
   end
 end

@@ -4,7 +4,6 @@ defmodule Tosk.Repo.Migrations.CreateBoard do
   def change do
     create table(:boards) do
       add :name, :string
-      add :category, :integer
 
       timestamps
     end

@@ -9,7 +9,9 @@ defmodule Tosk.BoardView do
   end
 
   def render("show.json", %{board: board}) do
-    %{board: render_one(board, "board.json")}
+    %{
+      board: render_one(board, "board.json")
+    }
   end
 
   def render("create.json", %{id: id}) do
