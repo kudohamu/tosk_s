@@ -27,4 +27,8 @@ defmodule Tosk.Router do
     post "/user/login", UserController, :login
     post "/user/logout", UserController, :logout
   end
+
+  socket "/ws", Tosk do
+    channel "todos:lobby", TODOChannel
+  end
 end
