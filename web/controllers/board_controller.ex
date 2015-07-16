@@ -50,7 +50,16 @@ defmodule Tosk.BoardController do
           end
         end) do
           {:ok, board_id} ->
-            render(conn, "create.json", %{ id: board_id })
+            ids_query = Ecto.Query.from ub in UsersBoards, 
+            where: ub.user_id == ^id,
+            select: ub.board_id
+            board_ids = Repo.all(ids_query)
+
+            boards_query = Ecto.Query.from b in Board, 
+            where: b.id in ^board_ids
+            boards = Repo.all(boards_query)
+            #render(conn, "create.json", %{ id: board_id })
+            render(conn, "index.json", %{ boards: boards })
           {:error, _} ->
             conn
             |> put_status(:unprocessable_entity)
@@ -86,7 +95,16 @@ defmodule Tosk.BoardController do
         Repo.delete(board)
         Repo.delete(usersboards)
 
-        render(conn, "delete.json", %{})
+        ids_query = Ecto.Query.from ub in UsersBoards, 
+        where: ub.user_id == ^user_id,
+        select: ub.board_id
+        board_ids = Repo.all(ids_query)
+
+        boards_query = Ecto.Query.from b in Board, 
+        where: b.id in ^board_ids
+        boards = Repo.all(boards_query)
+        render(conn, "index.json", %{ boards: boards })
+        #render(conn, 'delete.json", %{})
       :unauthorized ->
         conn
         |> put_status(:unprocessable_entity)
