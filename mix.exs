@@ -35,7 +35,8 @@ defmodule Tosk.Mixfile do
      {:phoenix_html, "~> 1.0"},
      {:phoenix_live_reload, "~> 0.4", only: :dev},
      {:cowboy, "~> 1.0"},
-     {:comeonin, "~> 1.0"}
+     {:comeonin, "~> 1.0"},
+     {:erlcloud, "0.9.2"}
    ]
   end
 end

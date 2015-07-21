@@ -53,6 +53,7 @@ defmodule Tosk.User do
           end
           case File.write(Path.join([get_user_icon_path, icon_name]), image_bin, [:binary]) do
             :ok ->
+              #System.cmd("aws s3 cp /Users/tanakayugo/elixir/tosk/public/user_icons/#{icon_name} s3://kudohamu-main-bucket/tosk/user_icons/#{icon_name} --acl public-read", [])
               {:ok, icon_name}
             {:error, _} ->
               # 画像が保存できなかった
