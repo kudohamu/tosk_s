@@ -5,6 +5,8 @@ defmodule Tosk.Repo.Migrations.CreateTODO do
     create table(:todos) do
       add :uid, :string
       add :public, :boolean, default: false
+      add :title, :string
+      add :checked, :boolean, default: false
       add :content, :string
       add :board_id, :integer
 

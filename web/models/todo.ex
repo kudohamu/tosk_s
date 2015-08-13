@@ -6,6 +6,8 @@ defmodule Tosk.TODO do
   schema "todos" do
     field :uid, :string
     field :public, :boolean, default: false
+    field :checked, :boolean, default: false
+    field :title, :string
     field :content, :string
     belongs_to :board, Tosk.Board
 
