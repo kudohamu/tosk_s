@@ -20,9 +20,22 @@ defmodule Tosk.TODOChannel do
   end
 
   # It is also common to receive messages from the client and
-  # broadcast to everyone in the current topic (todos:lobby).
-  def handle_in("shout", payload, socket) do
-    broadcast socket, "shout", payload
+  # broadcast to everyone in the current topic (todos:*).
+  def handle_in("index", payload, socket) do
+    "todos:" <> board_id = socket.topic
+    todos_query = Ecto.Query.from td in TODO, 
+      where: td.board_id == ^board_id
+    todos = Repo.all(todos_query)
+    jtodo = Enum.map(todos, 
+      fn todo -> 
+        case TODO.buildTODO(todo.id) do
+          {:ok, jtodo} ->
+            jtodo
+          {:error} ->
+            %{}
+        end
+      end)
+    broadcast socket, "index", %{:data => jtodo}
     {:noreply, socket}
   end
 
@@ -39,7 +52,7 @@ defmodule Tosk.TODOChannel do
 
     board = Repo.get(Board, payload["boardId"])
     if board do
-      changeset = TODO.changeset(%TODO{}, %{ title: payload["title"], checked: false, content: "[]", board_id: board.id })
+      changeset = TODO.changeset(%TODO{}, %{ uid: Ecto.UUID.generate(), title: payload["title"], checked: false, content: "[]", board_id: board.id })
       if changeset.valid? do
         todo = Repo.insert(changeset)
         broadcast socket, "created", payload
