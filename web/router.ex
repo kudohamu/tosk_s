@@ -29,6 +29,6 @@ defmodule Tosk.Router do
   end
 
   socket "/ws", Tosk do
-    channel "todos:lobby", TODOChannel
+    channel "todos:*", TODOChannel
   end
 end
