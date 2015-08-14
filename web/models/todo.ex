@@ -14,7 +14,7 @@ defmodule Tosk.TODO do
     timestamps
   end
 
-  @required_fields ~w(uid content board_id)
+  @required_fields ~w(uid title content board_id)
   @optional_fields ~w(public)
 
   @doc """
@@ -27,7 +27,6 @@ defmodule Tosk.TODO do
     model
     |> cast(params, @required_fields, @optional_fields)
     |> validate_unique(:uid, on: Tosk.Repo)
-    |> validate_public_only_template()
   end
 
   def validate_public_only_template(changeset) do
