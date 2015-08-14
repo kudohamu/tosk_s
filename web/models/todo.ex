@@ -2,6 +2,9 @@ defmodule Tosk.TODO do
   use Tosk.Web, :model
 
   alias Tosk.Board
+  alias Tosk.TODO
+
+  import JSON
 
   schema "todos" do
     field :uid, :string
@@ -35,6 +38,23 @@ defmodule Tosk.TODO do
       add_error(changeset, :"active_board_todo", "cannot be public")
     else 
       changeset
+    end
+  end
+
+  # json用のmapにエンコードする
+  def encodeTODOtoJSON(id) do
+    todo = Tosk.Repo.get(TODO, id)
+
+    if todo do
+      case JSON.decode(todo.content) do
+        {:ok, children} ->
+          jtodo = %{ id: todo.id, title: todo.title, checked: todo.checked, children: children }
+          {:ok, jtodo}
+        _ ->
+          {:error}
+      end
+    else
+      {:error}
     end
   end
 end
