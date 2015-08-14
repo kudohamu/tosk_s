@@ -28,7 +28,7 @@ defmodule Tosk.TODOChannel do
     todos = Repo.all(todos_query)
     jtodo = Enum.map(todos, 
       fn todo -> 
-        case TODO.buildTODO(todo.id) do
+        case TODO.encodeTODOtoJSON(todo.id) do
           {:ok, jtodo} ->
             jtodo
           {:error} ->
