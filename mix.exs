@@ -37,7 +37,8 @@ defmodule Tosk.Mixfile do
      {:cowboy, "~> 1.0"},
      {:comeonin, "~> 1.0"},
      {:erlcloud, "0.9.2"},
-     {:exrm, "~> 0.15"}
+     {:exrm, "~> 0.15"},
+     {:json, "~> 0.3.2"}
    ]
   end
 end
