@@ -5,8 +5,7 @@ defmodule Tosk.TODOChannel do
   alias Tosk.Board
   alias Tosk.TODO
 
-  def join("todos:lobby", payload, socket) do
-    IO.puts "lobby"
+  def join("todos:" <> _board_id, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else
