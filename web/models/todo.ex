@@ -48,7 +48,7 @@ defmodule Tosk.TODO do
     if todo do
       case JSON.decode(todo.content) do
         {:ok, children} ->
-          jtodo = %{ id: todo.id, title: todo.title, checked: todo.checked, children: children }
+          jtodo = %{ id: todo.id, content: todo.title, checked: todo.checked, children: children }
           {:ok, jtodo}
         _ ->
           {:error}
