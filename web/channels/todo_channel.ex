@@ -55,7 +55,8 @@ defmodule Tosk.TODOChannel do
       changeset = TODO.changeset(%TODO{}, %{ uid: Ecto.UUID.generate(), title: payload["title"], checked: false, content: "[]", board_id: board.id })
       if changeset.valid? do
         todo = Repo.insert(changeset)
-        broadcast socket, "created", payload
+        {:ok, jtodo} = TODO.encodeTODOtoJSON(todo)
+        broadcast socket, "created", %{:todo => jtodo}
       end
     end
     {:noreply, socket}
