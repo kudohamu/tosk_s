@@ -62,6 +62,19 @@ defmodule Tosk.TODOChannel do
     {:noreply, socket}
   end
 
+  def handle_in("delete", payload, socket) do
+    todo = Repo.get(TODO, payload["id"])
+    if todo && payload["boardId"] == todo.board_id do
+      case Repo.delete todo do
+        {:error, _} ->
+          {:noreply, socket}
+        _ ->
+          broadcast socket, "deleted", %{:id => todo.id}
+      end
+    end
+    {:noreply, socket}
+  end
+
   # This is invoked every time a notification is being broadcast
   # to the client. The default implementation is just to push it
   # downstream but one could filter or change the event.
