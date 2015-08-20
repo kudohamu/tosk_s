@@ -63,13 +63,13 @@ defmodule Tosk.TODOChannel do
   end
 
   def handle_in("delete", payload, socket) do
-    todo = Repo.get(TODO, payload["id"])
+    todo = Repo.get(TODO, uid:  payload["id"])
     if todo && payload["boardId"] == todo.board_id do
       case Repo.delete todo do
         {:error, _} ->
           {:noreply, socket}
         _ ->
-          broadcast socket, "deleted", %{:id => todo.id}
+          broadcast socket, "deleted", %{:id => todo.uid}
       end
     end
     {:noreply, socket}
