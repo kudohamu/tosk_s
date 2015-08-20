@@ -40,7 +40,7 @@ defmodule Tosk.TODOChannel do
   end
 
   def handle_in("change", payload, socket) do
-    broadcast socket, "change", payload
+    broadcast socket, "changed", payload
     {:noreply, socket}
   end
 
