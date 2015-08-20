@@ -57,4 +57,45 @@ defmodule Tosk.TODO do
       {:error}
     end
   end
+
+  # Ecto用のレコードにデコードする
+  def decodeJSONtoTODO(jtodo) do
+    todo = Tosk.Repo.get_by(TODO, uid: jtodo["id"])
+
+    if todo do
+      case JSON.encode(filter_todo_value(jtodo["children"])) do
+        {:ok, content} ->
+          changeset = TODO.changeset(todo, %{ uid: jtodo["id"], title: jtodo["content"], checked: jtodo["checked"], content: content })
+          if changeset.valid? do
+            todo = Tosk.Repo.update(changeset)
+            {:ok, todo}
+          else 
+            {:error}
+          end
+        _ ->
+          {:error}
+      end
+    else
+      {:error}
+    end
+  end
+
+  def filter_todo_value([]) do
+    []
+  end
+
+  def filter_todo_value(children) do
+    Enum.map(children,
+      fn todo ->
+        %{ id: set_uid(todo["id"]), content: todo["content"], checked: todo["checked"], children: filter_todo_value(todo["children"]) }
+      end
+    )
+  end
+
+  def set_uid(id) do
+    case id do
+      "" -> Ecto.UUID.generate
+      _ -> id
+    end
+  end
 end
