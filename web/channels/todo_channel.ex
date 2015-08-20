@@ -40,7 +40,13 @@ defmodule Tosk.TODOChannel do
   end
 
   def handle_in("change", payload, socket) do
-    broadcast socket, "changed", payload
+    case TODO.decodeJSONtoTODO(payload["todo"]) do
+      {:ok, todo} ->
+        {:ok, jtodo} = TODO.encodeTODOtoJSON(todo.id)
+        broadcast socket, "changed", %{:todo => jtodo}
+      {:error} ->
+        {:noreply, socket}
+    end
     {:noreply, socket}
   end
 
