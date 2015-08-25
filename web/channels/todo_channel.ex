@@ -51,12 +51,9 @@ defmodule Tosk.TODOChannel do
   end
 
   def handle_in("create", payload, socket) do
-    IO.puts payload["id"]
-    IO.puts payload["token"]
-    IO.puts payload["title"]
-    IO.puts payload["boardId"]
 
-    board = Repo.get(Board, payload["boardId"])
+    "todos:" <> board_id = socket.topic
+    board = Repo.get(Board, board_id)
     if board do
       changeset = TODO.changeset(%TODO{}, %{ uid: Ecto.UUID.generate(), title: payload["title"], checked: false, content: "[]", board_id: board.id })
       if changeset.valid? do
@@ -69,8 +66,9 @@ defmodule Tosk.TODOChannel do
   end
 
   def handle_in("delete", payload, socket) do
+    "todos:" <> board_id = socket.topic
     todo = Repo.get_by(TODO, uid:  payload["id"])
-    if todo && payload["boardId"] == todo.board_id do
+    if todo && board_id == todo.board_id do
       case Repo.delete todo do
         {:error, _} ->
           {:noreply, socket}
