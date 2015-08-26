@@ -7,7 +7,7 @@ defmodule Tosk.Repo.Migrations.CreateTODO do
       add :public, :boolean, default: false
       add :title, :string
       add :checked, :boolean, default: false
-      add :content, :string
+      add :content, :text
       add :board_id, :integer
 
       timestamps
