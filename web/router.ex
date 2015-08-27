@@ -30,5 +30,6 @@ defmodule Tosk.Router do
 
   socket "/ws", Tosk do
     channel "todos:*", TODOChannel
+    channel "boards:*", BoardChannel
   end
 end
