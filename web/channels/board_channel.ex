@@ -66,6 +66,37 @@ defmodule Tosk.BoardChannel do
     {:noreply, socket}
   end
 
+  def handle_in("delete", payload, socket) do
+    "boards:" <> _user_id = socket.topic
+
+    board = Repo.get(Board, payload["id"])
+    usersboards = Repo.get_by(UsersBoards, user_id: _user_id, board_id: payload["id"])
+
+    if board && usersboards do
+      case Repo.transaction(fn -> 
+        case Repo.delete usersboards do
+          {:error, _} ->
+            Repo.rollback(:error)
+          _ ->
+            case Repo.delete board do
+              {:error, _} ->
+                Repo.rollback(:error)
+              _ ->
+                board.id
+            end
+        end
+      end) do
+        {:ok, board_id} ->
+          broadcast socket, "deleted", %{:id => board_id}
+        {:error, _} ->
+          {:noreply, socket}
+      end
+    else
+      {:noreply, socket}
+    end
+    {:noreply, socket}
+  end
+
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (boards:lobby).
   def handle_in("shout", payload, socket) do
