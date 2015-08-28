@@ -1,7 +1,10 @@
 defmodule Tosk.BoardChannel do
   use Tosk.Web, :channel
 
-  def join("boards:" _user_id, payload, socket) do
+  alias Tosk.Board
+  alias Tosk.UsersBoards
+
+  def join("boards:" <> _user_id, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else
