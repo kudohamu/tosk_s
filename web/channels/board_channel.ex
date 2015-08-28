@@ -18,6 +18,28 @@ defmodule Tosk.BoardChannel do
     {:reply, {:ok, payload}, socket}
   end
 
+  def handle_in("index", payload, socket) do
+    "boards:" <> _user_id = socket.topic
+
+    ids_query = Ecto.Query.from ub in UsersBoards, 
+    where: ub.user_id == ^_user_id,
+    select: ub.board_id
+    board_ids = Repo.all(ids_query)
+
+    boards_query = Ecto.Query.from b in Board, 
+    where: b.id in ^board_ids
+    boards = Repo.all(boards_query)
+
+    jboards = Enum.map(boards, 
+      fn board -> 
+        %{ id: board.id, name: board.name }
+      end
+    )
+
+    broadcast socket, "index", %{:boards => jboards}
+    {:noreply, socket}
+  end
+
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (boards:lobby).
   def handle_in("shout", payload, socket) do
