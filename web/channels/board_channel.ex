@@ -40,6 +40,32 @@ defmodule Tosk.BoardChannel do
     {:noreply, socket}
   end
 
+  def handle_in("create", payload, socket) do
+    "boards:" <> _user_id = socket.topic
+    changeset = Board.changeset(%Board{}, %{ name: payload["name"] })
+    case Repo.transaction(fn ->
+      if changeset.valid? do
+        board = Repo.insert(changeset)
+        usersboards_changeset = UsersBoards.changeset(%UsersBoards{}, %{ user_id: _user_id, board_id: board.id })
+
+        if usersboards_changeset.valid? do
+          Repo.insert(usersboards_changeset)
+          board
+        else
+          Repo.rollback(:error)
+        end
+      else
+        Repo.rollback(:error)
+      end
+    end) do
+      {:ok, board} ->
+        broadcast socket, "created", %{:board => %{ id: board.id, name: board.name }}
+      {:error, _} ->
+        {:noreply, socket}
+    end
+    {:noreply, socket}
+  end
+
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (boards:lobby).
   def handle_in("shout", payload, socket) do
