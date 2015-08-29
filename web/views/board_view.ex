@@ -14,10 +14,10 @@ defmodule Tosk.BoardView do
     }
   end
 
-  def render("create.json", %{id: id}) do
+  def render("create.json", %{board: board}) do
     %{
       result: "ok",
-      id: id,
+      board: board,
     }
   end
 

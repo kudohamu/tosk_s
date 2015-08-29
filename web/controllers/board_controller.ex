@@ -41,7 +41,7 @@ defmodule Tosk.BoardController do
 
             if usersboards_changeset.valid? do
               Repo.insert(usersboards_changeset)
-              board.id
+              board
             else
               Repo.rollback(:error)
             end
@@ -49,17 +49,8 @@ defmodule Tosk.BoardController do
             Repo.rollback(:error)
           end
         end) do
-          {:ok, board_id} ->
-            ids_query = Ecto.Query.from ub in UsersBoards, 
-            where: ub.user_id == ^id,
-            select: ub.board_id
-            board_ids = Repo.all(ids_query)
-
-            boards_query = Ecto.Query.from b in Board, 
-            where: b.id in ^board_ids
-            boards = Repo.all(boards_query)
-            #render(conn, "create.json", %{ id: board_id })
-            render(conn, "index.json", %{ boards: boards })
+          {:ok, board} ->
+            render(conn, "create.json", board: %{ id: board.id, name: board.name })
           {:error, _} ->
             conn
             |> put_status(:unprocessable_entity)
@@ -82,7 +73,7 @@ defmodule Tosk.BoardController do
     else
       conn
       |> put_status(:unprocessable_entity)
-      |> render(Tosk.ErrorView, "error.json", %{ msg: "failed_to_creating_board" })
+      |> render(Tosk.ErrorView, "error.json", %{ msg: "failed_to_updating_board" })
     end
   end
 
